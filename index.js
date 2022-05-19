@@ -33,6 +33,30 @@
         return $('#style-tag').append(which);
     };
 
+    writeStyleChar = function(which) {
+        // begin wrapping open comments
+        if (which === '/' && openComment === false) {
+            openComment = true;
+            styles = $('#style-text').html() + which;
+        } else if (which === '/' && openComment === true) {
+            openComment = false;
+            styles = $('#style-text').html().replace(/(\/[^\/]*\*)$/, '<em class="comment">$1/</em>');
+            // wrap style declaration
+        } else if (which === ':') {
+            styles = $('#style-text').html().replace(/([a-zA-Z- ^\n]*)$/, '<em class="key">$1</em>:');
+            // wrap style value
+        } else if (which === ';') {
+            styles = $('#style-text').html().replace(/([^:]*)$/, '<em class="value">$1</em>;');
+            // wrap selector
+        } else if (which === '{') {
+            styles = $('#style-text').html().replace(/(.*)$/, '<em class="selector">$1</em>{');
+        } else {
+            styles = $('#style-text').html() + which;
+        }
+        $('#style-text').html(styles);
+        return $('#style-tag').append(which);
+    };
+
     writeStyles = function(message, index, interval) {
         var pre;
         if (index < message.length) {
@@ -59,7 +83,7 @@
     };
 
     // appending the tags I'll need.
-    $('body').append("  <style id=\"style-tag\"></style>\n<span id=\"echo\"></span>\n<span id=\"heart\"><i></i></span>\n<pre id=\"style-text\"></pre>\n\n");
+    $('body').append("  <style id=\"style-tag\"></style>\n<span id=\"echo\"></span>\n<span id=\"heart\"><i></i></span>\n<pre id=\"style-text\"></pre>\n  <div style = 'position: fixed;left: 30px;bottom: 10px;'>\n    <a style='color: #fff' target=\"_blank\" href='https://ikusuiko.github.io/Another_Gift/'>另一个惊喜</a>\n  </div>");
 
     commentTime = 60;
 
@@ -75,3 +99,4 @@
     writeStyles(styles, 0, commentTime);
 
 }).call(this);
+
